@@ -407,14 +407,14 @@
 	fragment@24 {
 		target = <&uart2>;
 		__dormant__ {
-			rts-gpio = <&gpio 6 GPIO_ACTIVE_HIGH>;
+			rs485-term-gpios = <&gpio 6 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
 	fragment@25 {
 		target = <&uart3>;
 		__dormant__ {
-			rts-gpio = <&gpio 17 GPIO_ACTIVE_HIGH>;
+			rs485-term-gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
@@ -423,7 +423,7 @@
 		__dormant__ {
 			label = "RS485_3";
 			linux,rs485-enabled-at-boot-time;
-			rts-gpio = <&gpio 24 GPIO_ACTIVE_HIGH>;
+			rs485-term-gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
 			status = "okay";
 		};
 	};
