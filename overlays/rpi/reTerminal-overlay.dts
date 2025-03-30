@@ -71,13 +71,15 @@
 
 			#address-cells = <1>;
 			#size-cells = <0>;
-			
+
+			/* Accelerometer */
 			lis331dlh@19 {
 				compatible = "st,lis331dlh";
 				reg = <0x19>;
 				status = "okay";
 			};
 			
+			/* GPIO Expander */
 			mcp23008: mcp@20 {
 				compatible = "microchip,mcp23008","nxp,pca9554";
 				reg = <0x38>;
@@ -96,12 +98,14 @@
 				};
 			};
 
+			/* Light Sensor */
 			ltr303@29 {
 				compatible = "liteon,ltr303";
 				reg = <0x29>;
 				status = "okay";
 			};
 			
+			/* Touchscreen */
 			mipi_dsi: mipi_dsi@45 {
 				compatible = "i2c_dsi,ili9881d";
 				reg = <0x45>;
@@ -129,6 +133,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 			
+			/* RTC */
 			pcf8563@51 {
 				compatible = "nxp,pcf8563";
 				reg = <0x51>;
