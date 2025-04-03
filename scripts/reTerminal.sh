@@ -610,17 +610,17 @@ function install {
   update-initramfs -c -k $(uname -r)
 
   # audio
-  if [ "$device" = "reTerminal" ]; then
-    if [ -f "/var/lib/alsa/asound.state" ]; then
-      cp /var/lib/alsa/asound.state /var/lib/alsa/asound.state.bak
-    fi
-    if [ -f "/etc/asound.conf" ]; then
-      cp /etc/asound.conf /etc/asound.conf.bak
-    fi
-    cp ${MOD_PATH}/seeed-voicecard/wm8960_asound.state /var/lib/alsa/asound.state 
-    cp ${MOD_PATH}/seeed-voicecard/asound_2mic.conf /etc/asound.conf
-    alsactl -L restore
-  fi
+  # if [ "$device" = "reTerminal" ]; then
+  #   if [ -f "/var/lib/alsa/asound.state" ]; then
+  #     cp /var/lib/alsa/asound.state /var/lib/alsa/asound.state.bak
+  #   fi
+  #   if [ -f "/etc/asound.conf" ]; then
+  #     cp /etc/asound.conf /etc/asound.conf.bak
+  #   fi
+  #   cp ${MOD_PATH}/seeed-voicecard/wm8960_asound.state /var/lib/alsa/asound.state 
+  #   cp ${MOD_PATH}/seeed-voicecard/asound_2mic.conf /etc/asound.conf
+  #   alsactl -L restore
+  # fi
 
   echo "------------------------------------------------------"
   echo "Please reboot your device to apply all settings"
@@ -629,19 +629,9 @@ function install {
 }
 
 function uninstall {
-  if [ "$device" = "reTerminal" ]; then
-    uninstall_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
-    unsetup_overlay reTerminal tp_rotate=1
-    uninstall_overlay reTerminal
-  elif [ "$device" = "reTerminal-DM" ]; then
-    uninstall_modules ili9881d ltr30x ch34x rtc-pcf8563w
-    uninstall_overlay_DM
-    unblacklist_driver cdc_acm
-  elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
-       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ]; then
-    uninstall_modules rtc-pcf8563w
-    uninstall_overlay_reComputer
-  fi
+  uninstall_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
+  unsetup_overlay reTerminal tp_rotate=1
+  uninstall_overlay reTerminal
 }
 
 
@@ -685,10 +675,8 @@ while [ ! -z "$1" ] ; do
   shift
 done
 
-if [ "$device" != "reTerminal" ] && [ "$device" != "reTerminal-DM" ] && \
-    [ "$device" != "reComputer-R100x" ] && [ "$device" != "reComputer-R110x" ] && \
-    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ]; then
-  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-AI-box" 1>&2
+if [ "$device" != "reTerminal" ] then
+  echo "Invalid device type. The type should be reTerminal" 1>&2
   exit 1;
 fi
 
@@ -768,13 +756,3 @@ if [[ $r -eq 0 ]]; then
 fi
 
 install
-
-
-
-
-
-
-
-
-
-
