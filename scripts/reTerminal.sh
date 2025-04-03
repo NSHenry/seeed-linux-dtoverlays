@@ -583,7 +583,7 @@ function setup_display {
 
 function install {
   if [ "$device" = "reTerminal" ]; then
-    install_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
+    install_modules mipi_dsi ltr30x bq24179_charger
     install_overlay reTerminal
     if [ $DEBIAN_NUM -eq $BOOKWORM_NUM ]; then
       setup_overlay reTerminal tp_rotate=1
@@ -629,7 +629,7 @@ function install {
 }
 
 function uninstall {
-  uninstall_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
+  uninstall_modules mipi_dsi ltr30x bq24179_charger
   unsetup_overlay reTerminal tp_rotate=1
   uninstall_overlay reTerminal
 }
