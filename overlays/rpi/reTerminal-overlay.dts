@@ -104,7 +104,7 @@
 				reg = <0x45>;
 				
 				mcu_auto_reset_enable = <0>;
-				tp_point_rotate = <0>;
+				tp_point_rotate = <1>;
 
 				port {
 					panel_dsi_port: endpoint {
