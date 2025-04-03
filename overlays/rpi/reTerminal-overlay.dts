@@ -73,11 +73,11 @@
 			#size-cells = <0>;
 
 			/* Accelerometer */
-			lis331dlh@19 {
-				compatible = "st,lis331dlh";
-				reg = <0x19>;
-				status = "okay";
-			};
+			/* lis331dlh@19 { */
+				/* compatible = "st,lis331dlh"; */
+				/* reg = <0x19>;  */
+				/* status = "okay";  */
+			/* }; */
 			
 			/* GPIO Expander */
 			mcp23008: mcp@20 {
