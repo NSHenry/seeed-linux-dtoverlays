@@ -677,7 +677,7 @@ done
 
 if [ "$device" != "reTerminal" ] then
   echo "Invalid device type. The type should be reTerminal" 1>&2
-  exit 1;
+  exit 1
 fi
 
 if [ "X$auto_remove" != "X" ]; then
