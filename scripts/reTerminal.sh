@@ -676,7 +676,7 @@ while [ ! -z "$1" ] ; do
 done
 
 if [ "$device" != "reTerminal" ] then
-  echo "Invalid device type. The type should be reTerminal" 1>&2
+  echo "Invalid device type. The type should be reTerminal"
   exit 1
 fi
 
