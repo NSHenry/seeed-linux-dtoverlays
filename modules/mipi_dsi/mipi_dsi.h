@@ -40,6 +40,7 @@
 #include <linux/input.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
+#include <linux/backlight.h>
 
 #define MIPI_DSI_DRIVER_NAME        "mipi_dsi"
 
