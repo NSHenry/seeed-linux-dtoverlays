@@ -9,7 +9,7 @@
 /plugin/;
 
 / {
-    compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2711", "brcm,bcm2712";
+    compatible = "brcm,bcm2711", "brcm,bcm2712";
 
     fragment@0 {
         target-path="/";
@@ -71,13 +71,6 @@
 
 			#address-cells = <1>;
 			#size-cells = <0>;
-
-			/* Accelerometer */
-			lis331dlh@19 {
-				compatible = "st,lis331dlh";
-				reg = <0x19>;
-				status = "okay";
-			};
 			
 			/* GPIO Expander */
 			mcp23008: mcp@20 {
@@ -164,12 +157,6 @@
 				gpios = <&mcp23008 6 1>;
 			};
 
-			usr_buzzer: usr_led3 {
-				label = "usr_buzzer";
-				linux,default-trigger = "default-off";
-				gpios = <&mcp23008 7 0>;
-				default-state = "off";
-			};
 		};
 	};
 
@@ -183,7 +170,7 @@
 
 				usr_btn0: usr_btn0 {
 					debounce-interval = <5>;
-					linux,code = <30>; /* BTN_0, KEY_A */
+					linux,code = <224>; /* BTN_0, KEY_BRIGHTNESSDOWN */
 					label = "usr_btn0";
 					gpios = <&mcp23008 0 1>;
 					gpio-key,wakeup;
@@ -192,7 +179,7 @@
 
 				usr_btn1: usr_btn1 {
 					debounce-interval = <5>;
-					linux,code = <31>; /* BTN_1, KEY_S */
+					linux,code = <225>; /* BTN_1, KEY_BRIGHTNESSUP */
 					label = "usr_btn1";
 					gpios = <&mcp23008 2 1>;
 					gpio-key,wakeup;
@@ -201,7 +188,7 @@
 
 				usr_btn2: usr_btn2 {
 					debounce-interval = <5>;
-					linux,code = <32>; /* BTN_2, KEY_D */
+					linux,code = <87>; /* BTN_2, KEY_F11 */
 					label = "usr_btn2";
 					gpios = <&mcp23008 1 1>;
 					gpio-key,wakeup;
@@ -210,7 +197,7 @@
 
 				usr_btn3: usr_btn3 {
 					debounce-interval = <5>;
-					linux,code = <33>; /* BTN_3, KEY_F */
+					linux,code = <126>; /* BTN_3, KEY_RIGHTMETA */
 					label = "usr_btn3";
 					gpios = <&mcp23008 3 1>;
 					gpio-key,wakeup;
