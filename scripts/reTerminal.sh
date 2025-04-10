@@ -435,8 +435,10 @@ function install_overlay {
     make overlays/rpi/$i-overlay.dtbo || exit 1;
     cp -fv overlays/rpi/$i-overlay.dtbo $OVERLAY_DIR/$i.dtbo || exit 1;
 
-	grep -q "^dtoverlay=$i$" $CFG_PATH || \
-	  echo "dtoverlay=$i" >> $CFG_PATH
+    if [ $i != "reTerminal-bridge" ]; then
+      grep -q "^dtoverlay=$i$" $CFG_PATH || \
+      echo "dtoverlay=$i" >> $CFG_PATH
+    fi
   done
 }
 
@@ -756,3 +758,13 @@ if [[ $r -eq 0 ]]; then
 fi
 
 install
+
+
+
+
+
+
+
+
+
+

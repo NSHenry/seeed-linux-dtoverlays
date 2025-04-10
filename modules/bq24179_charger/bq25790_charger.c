@@ -910,11 +910,11 @@ static int bq25790_property_is_writeable(struct power_supply *psy,
 static const struct power_supply_desc bq25790_power_supply_desc = {
 	.name = "bq25790-charger",
 	.type = POWER_SUPPLY_TYPE_USB,
-	.usb_types = BIT(POWER_SUPPLY_USB_TYPE_SDP) |
-		     BIT(POWER_SUPPLY_USB_TYPE_CDP) |
-		     BIT(POWER_SUPPLY_USB_TYPE_DCP) |
-		     BIT(POWER_SUPPLY_USB_TYPE_ACA) |
-		     BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN),
+	.usb_types = BIT(POWER_SUPPLY_USB_TYPE_ACA)|
+	BIT(POWER_SUPPLY_USB_TYPE_SDP)|
+	BIT(POWER_SUPPLY_USB_TYPE_CDP)|
+	BIT(POWER_SUPPLY_USB_TYPE_DCP)|
+	BIT(POWER_SUPPLY_USB_TYPE_UNKNOWN),
 	.properties = bq25790_power_supply_props,
 	.num_properties = ARRAY_SIZE(bq25790_power_supply_props),
 	.get_property = bq25790_charger_get_property,

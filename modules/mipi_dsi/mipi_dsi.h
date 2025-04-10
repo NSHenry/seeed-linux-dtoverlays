@@ -28,6 +28,7 @@
 #include <linux/of_device.h>
 #include <linux/of_graph.h>
 #include <linux/pm.h>
+#include <linux/backlight.h>
 
 #include <drm/drm_crtc.h>
 #include <drm/drm_device.h>
@@ -40,7 +41,6 @@
 #include <linux/input.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
-#include <linux/backlight.h>
 
 #define MIPI_DSI_DRIVER_NAME        "mipi_dsi"
 
