@@ -289,6 +289,11 @@ function unblacklist_driver {
 }
 
 function install_overlay_reComputer {
+  # cmdline.txt
+  if [ "$device" = "reComputer-AI-box-cm5" ]; then
+    remove_cmdline_value "console=serial0,115200"
+    set_cmdline_value "console=ttyAMA0,115200"
+  fi
   # config.txt
   set_config_value "enable_uart" "1"
 
@@ -303,6 +308,8 @@ function install_overlay_reComputer {
 }
 
 function uninstall_overlay_reComputer {
+  # cmdline.txt
+  remove_cmdline_value "console=ttyAMA0,115200"
   # config.txt
   remove_config_value "enable_uart" "1"
 
@@ -569,19 +576,19 @@ function setup_display {
   esac
 }
 
-# function setup_tp {
-#   case $DISTRO_ID in
-#     Raspbian|Debian)
-#       case $DISTRO_CODE in
-#         bookworm)
-#           if [ "$device" = "reTerminal-DM" ]; then
-#             cp -v $RES_PATH/98-touchscreen-cal.rules /etc/udev/rules.d/
-#           fi
-#         ;;
-#       esac
-#       ;;
-#   esac
-# }
+function setup_tp {
+  case $DISTRO_ID in
+    Raspbian|Debian)
+      case $DISTRO_CODE in
+        bookworm)
+          if [ "$device" = "reTerminal-DM" ]; then
+            cp -v $RES_PATH/98-touchscreen-cal.rules /etc/udev/rules.d/
+          fi
+        ;;
+      esac
+      ;;
+  esac
+}
 
 function install {
   if [ "$device" = "reTerminal" ]; then
@@ -631,9 +638,19 @@ function install {
 }
 
 function uninstall {
-  uninstall_modules mipi_dsi ltr30x bq24179_charger
-  unsetup_overlay reTerminal tp_rotate=1
-  uninstall_overlay reTerminal
+  if [ "$device" = "reTerminal" ]; then
+    uninstall_modules mipi_dsi ltr30x bq24179_charger
+    unsetup_overlay reTerminal tp_rotate=1
+    uninstall_overlay reTerminal
+  elif [ "$device" = "reTerminal-DM" ]; then
+    uninstall_modules ili9881d ltr30x ch34x rtc-pcf8563w
+    uninstall_overlay_DM
+    unblacklist_driver cdc_acm
+  elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
+       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ]; then
+    uninstall_modules rtc-pcf8563w
+    uninstall_overlay_reComputer
+  fi
 }
 
 
@@ -677,9 +694,11 @@ while [ ! -z "$1" ] ; do
   shift
 done
 
-if [ "$device" != "reTerminal" ]; then
-  echo "Invalid device type. The type should be reTerminal"
-  exit 1
+if [ "$device" != "reTerminal" ] && [ "$device" != "reTerminal-DM" ] && \
+    [ "$device" != "reComputer-R100x" ] && [ "$device" != "reComputer-R110x" ] && \
+    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ]; then
+  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-AI-box" 1>&2
+  exit 1;
 fi
 
 if [ "X$auto_remove" != "X" ]; then
