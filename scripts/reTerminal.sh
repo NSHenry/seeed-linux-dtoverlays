@@ -302,9 +302,19 @@ function install_overlay_reComputer {
   if [ "$device" = "reComputer-R100x" ]; then
     set_config_dtoverlay "vc4-kms-dsi-7inch"
   fi
-  make overlays/rpi/$device-overlay.dtbo || exit 1;
-  cp -fv overlays/rpi/$device-overlay.dtbo $OVERLAY_DIR/$device.dtbo || exit 1;
-  set_config_dtoverlay "$device"
+  if [ "$device" = "reComputer-R2x" ]; then
+    make overlays/rpi/reComputer-R2x-base-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/reComputer-R2x-base-overlay.dtbo $OVERLAY_DIR/reComputer-R2x-base.dtbo || exit 1;
+
+    make overlays/rpi/reComputer-R21-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/reComputer-R21-overlay.dtbo $OVERLAY_DIR/reComputer-R21.dtbo || exit 1;
+
+    set_config_dtoverlay "reComputer-R2x-base"
+  else
+    make overlays/rpi/$device-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/$device-overlay.dtbo $OVERLAY_DIR/$device.dtbo || exit 1;
+    set_config_dtoverlay "$device"
+  fi
 }
 
 function uninstall_overlay_reComputer {
@@ -604,7 +614,8 @@ function install {
     # and we insmod a new driver for ch342f
     blacklist_driver cdc_acm
   elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
-       [ "$device" = "reComputer-AI-box" ] || [ "$device" = "reComputer-AI-box-cm5" ]; then
+       [ "$device" = "reComputer-AI-box" ] || [ "$device" = "reComputer-AI-box-cm5" ] || \
+       [ "$device" = "reComputer-R2x" ] || [ "$device" = "reComputer-R22" ]; then
     install_modules rtc-pcf8563w
     install_overlay_reComputer
   fi
@@ -647,7 +658,8 @@ function uninstall {
     uninstall_overlay_DM
     unblacklist_driver cdc_acm
   elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
-       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ]; then
+       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ] || \
+       [ "$device" = "reComputer-R2x" ] || [ "$device" != "reComputer-R22" ]; then
     uninstall_modules rtc-pcf8563w
     uninstall_overlay_reComputer
   fi
@@ -696,8 +708,9 @@ done
 
 if [ "$device" != "reTerminal" ] && [ "$device" != "reTerminal-DM" ] && \
     [ "$device" != "reComputer-R100x" ] && [ "$device" != "reComputer-R110x" ] && \
-    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ]; then
-  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-AI-box" 1>&2
+    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ] && \
+    [ "$device" != "reComputer-R2x" ] && [ "$device" != "reComputer-R22" ]; then
+  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-R2x reComputer-R22 reComputer-AI-box" 1>&2
   exit 1;
 fi
 
