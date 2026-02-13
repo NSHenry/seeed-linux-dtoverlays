@@ -31,6 +31,7 @@ BLACKLIST_PATH=/etc/modprobe.d/raspi-blacklist.conf
 DISTRO_ID=$(lsb_release -is)
 DISTRO_CODE=$(lsb_release -cs)
 BOOKWORM_NUM=12
+TRIXIE_NUM=13
 DEBIAN_VER=`cat /etc/debian_version`
 DEBIAN_NUM=$(echo "$DEBIAN_VER" | awk -F'.' '{print $1}')
 
@@ -91,7 +92,7 @@ function check_kernel_headers() {
         buster|bullseye)
           apt-get -y --force-yes install raspberrypi-kernel-headers
           ;;
-        bookworm)
+        bookworm|trixie)
           apt-get -y --force-yes linux-headers-rpi-${VER_RUN##*-}
           ;;
       esac
@@ -139,7 +140,7 @@ function install_kernel() {
           buster|bullseye)
             apt-get -y --force-yes install raspberrypi-kernel-headers raspberrypi-kernel
             ;;
-          bookworm)
+          bookworm|trixie)
             apt-get -y --force-yes install linux-image-rpi-${ker_ver##*-} linux-headers-rpi-${ker_ver##*-}
             ;;
         esac
@@ -301,6 +302,9 @@ function install_overlay_reComputer {
   set_config_dtoverlay "vc4-kms-v3d"
   if [ "$device" = "reComputer-R100x" ]; then
     set_config_dtoverlay "vc4-kms-dsi-7inch"
+  fi
+  if [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ]; then
+      set_config_dtparam "pcie_tperst_clk_ms" "100"
   fi
   if [ "$device" = "reComputer-R2x" ]; then
     make overlays/rpi/reComputer-R2x-base-overlay.dtbo || exit 1;
@@ -543,7 +547,7 @@ function setup_display {
             fi
           done
           ;;
-        bookworm)
+        bookworm|trixie)
           for file in /home/*
           do
             if [ -e "$file/.config/wayfire.ini" ]; then 
@@ -590,7 +594,7 @@ function setup_tp {
   case $DISTRO_ID in
     Raspbian|Debian)
       case $DISTRO_CODE in
-        bookworm)
+        bookworm|trixie)
           if [ "$device" = "reTerminal-DM" ]; then
             cp -v $RES_PATH/98-touchscreen-cal.rules /etc/udev/rules.d/
           fi
@@ -604,7 +608,7 @@ function install {
   if [ "$device" = "reTerminal" ]; then
     install_modules mipi_dsi ltr30x bq24179_charger
     install_overlay reTerminal
-    if [ $DEBIAN_NUM -eq $BOOKWORM_NUM ]; then
+    if [ "$DEBIAN_NUM" -eq "$BOOKWORM_NUM" ] || [ "$DEBIAN_NUM" -eq "$TRIXIE_NUM" ]; then
       setup_overlay reTerminal tp_rotate=1
     fi
   elif [ "$device" = "reTerminal-DM" ]; then
