@@ -31,6 +31,7 @@ BLACKLIST_PATH=/etc/modprobe.d/raspi-blacklist.conf
 DISTRO_ID=$(lsb_release -is)
 DISTRO_CODE=$(lsb_release -cs)
 BOOKWORM_NUM=12
+TRIXIE_NUM=13
 DEBIAN_VER=`cat /etc/debian_version`
 DEBIAN_NUM=$(echo "$DEBIAN_VER" | awk -F'.' '{print $1}')
 
@@ -91,7 +92,7 @@ function check_kernel_headers() {
         buster|bullseye)
           apt-get -y --force-yes install raspberrypi-kernel-headers
           ;;
-        bookworm)
+        bookworm|trixie)
           apt-get -y --force-yes linux-headers-rpi-${VER_RUN##*-}
           ;;
       esac
@@ -139,7 +140,7 @@ function install_kernel() {
           buster|bullseye)
             apt-get -y --force-yes install raspberrypi-kernel-headers raspberrypi-kernel
             ;;
-          bookworm)
+          bookworm|trixie)
             apt-get -y --force-yes install linux-image-rpi-${ker_ver##*-} linux-headers-rpi-${ker_ver##*-}
             ;;
         esac
@@ -302,9 +303,22 @@ function install_overlay_reComputer {
   if [ "$device" = "reComputer-R100x" ]; then
     set_config_dtoverlay "vc4-kms-dsi-7inch"
   fi
-  make overlays/rpi/$device-overlay.dtbo || exit 1;
-  cp -fv overlays/rpi/$device-overlay.dtbo $OVERLAY_DIR/$device.dtbo || exit 1;
-  set_config_dtoverlay "$device"
+  if [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ]; then
+      set_config_dtparam "pcie_tperst_clk_ms" "100"
+  fi
+  if [ "$device" = "reComputer-R2x" ]; then
+    make overlays/rpi/reComputer-R2x-base-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/reComputer-R2x-base-overlay.dtbo $OVERLAY_DIR/reComputer-R2x-base.dtbo || exit 1;
+
+    make overlays/rpi/reComputer-R21-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/reComputer-R21-overlay.dtbo $OVERLAY_DIR/reComputer-R21.dtbo || exit 1;
+
+    set_config_dtoverlay "reComputer-R2x-base"
+  else
+    make overlays/rpi/$device-overlay.dtbo || exit 1;
+    cp -fv overlays/rpi/$device-overlay.dtbo $OVERLAY_DIR/$device.dtbo || exit 1;
+    set_config_dtoverlay "$device"
+  fi
 }
 
 function uninstall_overlay_reComputer {
@@ -533,7 +547,7 @@ function setup_display {
             fi
           done
           ;;
-        bookworm)
+        bookworm|trixie)
           for file in /home/*
           do
             if [ -e "$file/.config/wayfire.ini" ]; then 
@@ -580,7 +594,7 @@ function setup_tp {
   case $DISTRO_ID in
     Raspbian|Debian)
       case $DISTRO_CODE in
-        bookworm)
+        bookworm|trixie)
           if [ "$device" = "reTerminal-DM" ]; then
             cp -v $RES_PATH/98-touchscreen-cal.rules /etc/udev/rules.d/
           fi
@@ -594,7 +608,7 @@ function install {
   if [ "$device" = "reTerminal" ]; then
     install_modules mipi_dsi ltr30x bq24179_charger
     install_overlay reTerminal
-    if [ $DEBIAN_NUM -eq $BOOKWORM_NUM ]; then
+    if [ "$DEBIAN_NUM" -eq "$BOOKWORM_NUM" ] || [ "$DEBIAN_NUM" -eq "$TRIXIE_NUM" ]; then
       setup_overlay reTerminal tp_rotate=1
     fi
   elif [ "$device" = "reTerminal-DM" ]; then
@@ -604,7 +618,8 @@ function install {
     # and we insmod a new driver for ch342f
     blacklist_driver cdc_acm
   elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
-       [ "$device" = "reComputer-AI-box" ] || [ "$device" = "reComputer-AI-box-cm5" ]; then
+       [ "$device" = "reComputer-AI-box" ] || [ "$device" = "reComputer-AI-box-cm5" ] || \
+       [ "$device" = "reComputer-R2x" ] || [ "$device" = "reComputer-R22" ]; then
     install_modules rtc-pcf8563w
     install_overlay_reComputer
   fi
@@ -647,7 +662,8 @@ function uninstall {
     uninstall_overlay_DM
     unblacklist_driver cdc_acm
   elif [ "$device" = "reComputer-R100x" ] || [ "$device" = "reComputer-R110x" ] || \
-       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ]; then
+       [ "$device" = "reComputer-AI-box" ] || [ "$device" != "reComputer-AI-box-cm5" ] || \
+       [ "$device" = "reComputer-R2x" ] || [ "$device" != "reComputer-R22" ]; then
     uninstall_modules rtc-pcf8563w
     uninstall_overlay_reComputer
   fi
@@ -696,8 +712,9 @@ done
 
 if [ "$device" != "reTerminal" ] && [ "$device" != "reTerminal-DM" ] && \
     [ "$device" != "reComputer-R100x" ] && [ "$device" != "reComputer-R110x" ] && \
-    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ]; then
-  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-AI-box" 1>&2
+    [ "$device" != "reComputer-AI-box" ] && [ "$device" != "reComputer-AI-box-cm5" ] && \
+    [ "$device" != "reComputer-R2x" ] && [ "$device" != "reComputer-R22" ]; then
+  echo "Invalid device type. the type should be reTerminal or reTerminal-DM reComputer-R100x reComputer-R110x reComputer-R2x reComputer-R22 reComputer-AI-box" 1>&2
   exit 1;
 fi
 
