@@ -570,6 +570,14 @@ function setup_display {
               fi
             fi 
           done
+          if [ "$DISTRO_CODE" = "trixie" ]; then
+            for file in /home/*
+            do
+              mkdir -p "$file/.config/labwc"
+              grep -q "wlr-randr --output DSI-1 --transform 270" "$file/.config/labwc/autostart" || \
+                echo "wlr-randr --output DSI-1 --transform 270 &" >> "$file/.config/labwc/autostart"
+            done
+          fi
           ;;
       esac
       ;;
