@@ -433,23 +433,23 @@ function install_overlay {
   # config.txt
   sed -i "s/.*dtparam=i2c_arm=.*$/dtparam=i2c_arm=on/g" ${CFG_PATH}
 
-  grep -q "^enable_uart=1$" $CFG_PATH || \
-    echo "enable_uart=1" >> $CFG_PATH
-  grep -q "^dtoverlay=dwc2,dr_mode=host$" $CFG_PATH || \
-    echo "dtoverlay=dwc2,dr_mode=host" >> $CFG_PATH
+  # grep -q "^enable_uart=1$" $CFG_PATH || \
+  #  echo "enable_uart=1" >> $CFG_PATH
+  # grep -q "^dtoverlay=dwc2,dr_mode=host$" $CFG_PATH || \
+  #  echo "dtoverlay=dwc2,dr_mode=host" >> $CFG_PATH
   grep -q "^dtparam=ant2$" $CFG_PATH || \
     echo "dtparam=ant2" >> $CFG_PATH
-  grep -q "^disable_splash=1$" $CFG_PATH || \
-    echo "disable_splash=1" >> $CFG_PATH
+ # grep -q "^disable_splash=1$" $CFG_PATH || \
+ #   echo "disable_splash=1" >> $CFG_PATH
 
-  grep -q "^ignore_lcd=1$" $CFG_PATH || \
-    echo "ignore_lcd=1" >> $CFG_PATH
-  grep -q "^dtoverlay=vc4-kms-v3d-pi4$" $CFG_PATH || \
-    echo "dtoverlay=vc4-kms-v3d-pi4" >> $CFG_PATH
-  grep -q "^dtoverlay=i2c3,pins_4_5$" $CFG_PATH || \
-    echo "dtoverlay=i2c3,pins_4_5" >> $CFG_PATH
-  grep -q "^gpio=13=pu$" $CFG_PATH || \
-    echo "gpio=13=pu" >> $CFG_PATH
+  # grep -q "^ignore_lcd=1$" $CFG_PATH || \
+  #  echo "ignore_lcd=1" >> $CFG_PATH
+  # grep -q "^dtoverlay=vc4-kms-v3d-pi4$" $CFG_PATH || \
+  #  echo "dtoverlay=vc4-kms-v3d-pi4" >> $CFG_PATH
+  # grep -q "^dtoverlay=i2c3,pins_4_5$" $CFG_PATH || \
+  #  echo "dtoverlay=i2c3,pins_4_5" >> $CFG_PATH
+  # grep -q "^gpio=13=pu$" $CFG_PATH || \
+  #  echo "gpio=13=pu" >> $CFG_PATH
 
   for i
   do
@@ -478,11 +478,11 @@ function uninstall_overlay {
   echo $CMDLINE > $CLI_PATH
 
   # config.txt
-  sed -i "/^disable_splash=1$/d" ${CFG_PATH}
-  sed -i "/^ignore_lcd=1$/d" ${CFG_PATH}
-  sed -i "/^dtoverlay=vc4-kms-v3d-pi4$/d" ${CFG_PATH}
-  sed -i "/^dtoverlay=i2c3,pins_4_5$/d" ${CFG_PATH}
-  sed -i "/^gpio=13=pu$/d" ${CFG_PATH}
+  # sed -i "/^disable_splash=1$/d" ${CFG_PATH}
+  # sed -i "/^ignore_lcd=1$/d" ${CFG_PATH}
+  # sed -i "/^dtoverlay=vc4-kms-v3d-pi4$/d" ${CFG_PATH}
+  # sed -i "/^dtoverlay=i2c3,pins_4_5$/d" ${CFG_PATH}
+  # sed -i "/^gpio=13=pu$/d" ${CFG_PATH}
 
   for i
   do
@@ -606,8 +606,8 @@ function setup_tp {
 
 function install {
   if [ "$device" = "reTerminal" ]; then
-    install_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
-    install_overlay reTerminal reTerminal-bridge
+    install_modules mipi_dsi ltr30x bq24179_charger
+    install_overlay reTerminal
     if [ "$DEBIAN_NUM" -eq "$BOOKWORM_NUM" ] || [ "$DEBIAN_NUM" -eq "$TRIXIE_NUM" ]; then
       setup_overlay reTerminal tp_rotate=1
     fi
@@ -634,17 +634,17 @@ function install {
   update-initramfs -c -k $(uname -r)
 
   # audio
-  if [ "$device" = "reTerminal" ]; then
-    if [ -f "/var/lib/alsa/asound.state" ]; then
-      cp /var/lib/alsa/asound.state /var/lib/alsa/asound.state.bak
-    fi
-    if [ -f "/etc/asound.conf" ]; then
-      cp /etc/asound.conf /etc/asound.conf.bak
-    fi
-    cp ${MOD_PATH}/seeed-voicecard/wm8960_asound.state /var/lib/alsa/asound.state 
-    cp ${MOD_PATH}/seeed-voicecard/asound_2mic.conf /etc/asound.conf
-    alsactl -L restore
-  fi
+  # if [ "$device" = "reTerminal" ]; then
+  #   if [ -f "/var/lib/alsa/asound.state" ]; then
+  #     cp /var/lib/alsa/asound.state /var/lib/alsa/asound.state.bak
+  #   fi
+  #   if [ -f "/etc/asound.conf" ]; then
+  #     cp /etc/asound.conf /etc/asound.conf.bak
+  #   fi
+  #   cp ${MOD_PATH}/seeed-voicecard/wm8960_asound.state /var/lib/alsa/asound.state 
+  #   cp ${MOD_PATH}/seeed-voicecard/asound_2mic.conf /etc/asound.conf
+  #   alsactl -L restore
+  # fi
 
   echo "------------------------------------------------------"
   echo "Please reboot your device to apply all settings"
@@ -654,9 +654,9 @@ function install {
 
 function uninstall {
   if [ "$device" = "reTerminal" ]; then
-    uninstall_modules mipi_dsi ltr30x lis3lv02d bq24179_charger
+    uninstall_modules mipi_dsi ltr30x bq24179_charger
     unsetup_overlay reTerminal tp_rotate=1
-    uninstall_overlay reTerminal reTerminal-bridge
+    uninstall_overlay reTerminal
   elif [ "$device" = "reTerminal-DM" ]; then
     uninstall_modules ili9881d ltr30x ch34x rtc-pcf8563w
     uninstall_overlay_DM

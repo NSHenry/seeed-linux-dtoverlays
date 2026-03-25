@@ -71,13 +71,15 @@
 
 			#address-cells = <1>;
 			#size-cells = <0>;
+
+			/* Accelerometer */
+			/* lis331dlh@19 { */
+				/* compatible = "st,lis331dlh"; */
+				/* reg = <0x19>;  */
+				/* status = "okay";  */
+			/* }; */
 			
-			lis331dlh@19 {
-				compatible = "st,lis331dlh";
-				reg = <0x19>;
-				status = "okay";
-			};
-			
+			/* GPIO Expander */
 			mcp23008: mcp@20 {
 				compatible = "microchip,mcp23008","nxp,pca9554";
 				reg = <0x38>;
@@ -96,12 +98,14 @@
 				};
 			};
 
+			/* Light Sensor */
 			ltr303@29 {
 				compatible = "liteon,ltr303";
 				reg = <0x29>;
 				status = "okay";
 			};
 			
+			/* Touchscreen */
 			mipi_dsi: mipi_dsi@45 {
 				compatible = "i2c_dsi,ili9881x";
 				reg = <0x45>;
@@ -129,6 +133,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 			
+			/* RTC */
 			pcf8563@51 {
 				compatible = "nxp,pcf8563";
 				reg = <0x51>;
@@ -178,7 +183,7 @@
 
 				usr_btn0: usr_btn0 {
 					debounce-interval = <5>;
-					linux,code = <30>; /* BTN_0, KEY_A */
+					linux,code = <224>; /* BTN_0, KEY_BRIGHTNESSDOWN */
 					label = "usr_btn0";
 					gpios = <&mcp23008 0 1>;
 					gpio-key,wakeup;
@@ -187,7 +192,7 @@
 
 				usr_btn1: usr_btn1 {
 					debounce-interval = <5>;
-					linux,code = <31>; /* BTN_1, KEY_S */
+					linux,code = <225>; /* BTN_1, KEY_BRIGHTNESSUP */
 					label = "usr_btn1";
 					gpios = <&mcp23008 2 1>;
 					gpio-key,wakeup;
@@ -196,7 +201,7 @@
 
 				usr_btn2: usr_btn2 {
 					debounce-interval = <5>;
-					linux,code = <32>; /* BTN_2, KEY_D */
+					linux,code = <87>; /* BTN_2, KEY_F11 */
 					label = "usr_btn2";
 					gpios = <&mcp23008 1 1>;
 					gpio-key,wakeup;
@@ -205,7 +210,7 @@
 
 				usr_btn3: usr_btn3 {
 					debounce-interval = <5>;
-					linux,code = <33>; /* BTN_3, KEY_F */
+					linux,code = <126>; /* BTN_3, KEY_RIGHTMETA */
 					label = "usr_btn3";
 					gpios = <&mcp23008 3 1>;
 					gpio-key,wakeup;
